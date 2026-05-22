@@ -34,6 +34,7 @@ const formatTime = (dateStr) => {
 export default function EmployeeDashboard() {
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const [tab, setTab] = useState('tasks');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [tasks, setTasks] = useState([]);
   const [employee, setEmployee] = useState(null);
   const [contacts, setContacts] = useState([]);
@@ -108,9 +109,15 @@ export default function EmployeeDashboard() {
     loadContacts();
     loadUnread();
 
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+
     // تحديث المهام كل 10 ثوانٍ
     taskPollRef.current = setInterval(loadTasks, 10000);
-    return () => clearInterval(taskPollRef.current);
+    return () => {
+      clearInterval(taskPollRef.current);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   // ── جلب المحادثة + polling ────────────────────────
@@ -184,7 +191,7 @@ export default function EmployeeDashboard() {
     <div style={{ fontFamily: 'Segoe UI, Tahoma, sans-serif', direction: 'rtl' }}>
 
       {/* ── بطاقة الترحيب ── */}
-      <div style={{ background: 'linear-gradient(135deg, #1D9E75, #0F6E56)', borderRadius: '14px', padding: '20px 24px', marginBottom: '20px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'linear-gradient(135deg, #1D9E75, #0F6E56)', borderRadius: '14px', padding: isMobile ? '16px' : '20px 24px', marginBottom: '20px', color: 'white', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', justifyContent: 'space-between', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '8px' : '0' }}>
         <div>
           <div style={{ fontSize: '11px', opacity: 0.8, marginBottom: '4px' }}>مرحباً بك</div>
           <div style={{ fontSize: '20px', fontWeight: '700' }}>{currentUser.name}</div>
@@ -208,7 +215,7 @@ export default function EmployeeDashboard() {
       </div>
 
       {/* ── إحصائيات ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? '8px' : '10px', marginBottom: '20px' }}>
         {[
           { label: 'إجمالي المهام', value: taskCounts.all, color: '#534AB7', bg: '#EEEDFE', icon: '📋' },
           { label: 'قيد التنفيذ', value: taskCounts.in_progress, color: '#BA7517', bg: '#FAEEDA', icon: '⏳' },
@@ -228,16 +235,16 @@ export default function EmployeeDashboard() {
       </div>
 
       {/* ── تبويبات ── */}
-      <div style={{ display: 'flex', gap: '4px', marginBottom: '16px', background: 'white', padding: '4px', borderRadius: '10px', border: '1px solid #eee', width: 'fit-content' }}>
+      <div style={{ display: 'flex', gap: '4px', marginBottom: '16px', background: 'white', padding: '4px', borderRadius: '10px', border: '1px solid #eee', width: isMobile ? '100%' : 'fit-content' }}>
         <button
           onClick={() => setTab('tasks')}
-          style={{ padding: '8px 22px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '500', background: tab === 'tasks' ? '#1D9E75' : 'transparent', color: tab === 'tasks' ? 'white' : '#666', transition: 'all 0.2s' }}
+          style={{ padding: '8px 22px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '500', background: tab === 'tasks' ? '#1D9E75' : 'transparent', color: tab === 'tasks' ? 'white' : '#666', transition: 'all 0.2s', flex: isMobile ? 1 : 'none' }}
         >
           📋 مهامي ({taskCounts.all})
         </button>
         <button
           onClick={() => { setTab('messages'); loadUnread(); }}
-          style={{ padding: '8px 22px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '500', background: tab === 'messages' ? '#1D9E75' : 'transparent', color: tab === 'messages' ? 'white' : '#666', transition: 'all 0.2s', position: 'relative' }}
+          style={{ padding: '8px 22px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: '500', background: tab === 'messages' ? '#1D9E75' : 'transparent', color: tab === 'messages' ? 'white' : '#666', transition: 'all 0.2s', position: 'relative', flex: isMobile ? 1 : 'none' }}
         >
           ✉ رسائلي
           {unread > 0 && (
@@ -400,10 +407,11 @@ export default function EmployeeDashboard() {
 
       {/* ══ تبويب الرسائل ══ */}
       {tab === 'messages' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '12px', height: '480px' }}>
+        <div style={{ display: isMobile ? 'flex' : 'grid', flexDirection: 'column', gridTemplateColumns: isMobile ? '1fr' : '260px 1fr', gap: '12px', height: isMobile ? 'auto' : '480px' }}>
 
           {/* قائمة جهات الاتصال */}
-          <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          {(!isMobile || !selectedContact) && (
+          <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: isMobile ? '350px' : 'auto' }}>
             <div style={{ padding: '10px 12px', borderBottom: '1px solid #f0f0f0' }}>
               <input
                 value={searchContact}
@@ -450,9 +458,11 @@ export default function EmployeeDashboard() {
               )}
             </div>
           </div>
+          )}
 
           {/* نافذة المحادثة */}
-          <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {(!isMobile || selectedContact) && (
+          <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', display: 'flex', flexDirection: 'column', overflow: 'hidden', height: isMobile ? '420px' : 'auto' }}>
             {!selectedContact ? (
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#aaa' }}>
                 <div style={{ fontSize: '42px', marginBottom: '10px' }}>💬</div>
@@ -462,6 +472,11 @@ export default function EmployeeDashboard() {
               <>
                 {/* رأس */}
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', gap: '10px', background: '#fafafa' }}>
+                  {isMobile && (
+                    <button onClick={() => setSelectedContact(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px', color: '#1D9E75', padding: '4px' }}>
+                      →
+                    </button>
+                  )}
                   <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#E1F5EE', color: '#085041', fontSize: '11px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {selectedContact.name?.slice(0, 2)}
                   </div>
@@ -533,6 +548,7 @@ export default function EmployeeDashboard() {
               </>
             )}
           </div>
+          )}
         </div>
       )}
     </div>

@@ -99,7 +99,7 @@ export default function Settings() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1fr', gap: '16px' }}>
 
         {/* معلومات الحساب */}
         <div style={{ background: 'white', borderRadius: '12px', padding: '20px', border: '1px solid #eee' }}>

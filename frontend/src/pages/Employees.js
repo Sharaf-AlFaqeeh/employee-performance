@@ -126,7 +126,7 @@ export default function Employees() {
   return (
     <div>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: '600' }}>الموظفون</h1>
           <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
@@ -161,7 +161,7 @@ export default function Employees() {
             إضافة موظف جديد
           </h3>
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 600 ? '1fr' : '1fr 1fr', gap: '12px' }}>
 
               <div>
                 <label style={{ fontSize: '12px', color: '#555', display: 'block', marginBottom: '4px', fontWeight: '500' }}>
@@ -275,12 +275,12 @@ export default function Employees() {
       )}
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
         <input
           placeholder="🔍 ابحث بالاسم أو الرقم الوظيفي..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
+          style={{ flex: 1, minWidth: '180px', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
         />
         <select
           value={deptFilter}
@@ -297,7 +297,8 @@ export default function Employees() {
         {loading ? (
           <div style={{ padding: '40px', textAlign: 'center', color: '#888' }}>جارٍ التحميل...</div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+          <div className="table-responsive">
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '750px' }}>
             <thead>
               <tr style={{ background: '#fafafa' }}>
                 {['الموظف', 'الرقم الوظيفي', 'القسم', 'الوظيفة', 'الحالة', 'معدل الإنجاز', 'إجراءات'].map(h => (
@@ -377,6 +378,7 @@ export default function Employees() {
               )}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

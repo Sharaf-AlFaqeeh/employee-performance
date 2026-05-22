@@ -35,6 +35,7 @@ export default function Messages() {
   const messagesEndRef = useRef(null);
   const pollRef = useRef(null);
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // جلب قائمة جهات الاتصال
   const loadContacts = () => {
@@ -65,6 +66,9 @@ export default function Messages() {
 
   useEffect(() => {
     loadContacts();
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // جلب المحادثة + polling
@@ -134,10 +138,11 @@ export default function Messages() {
     <div style={{ fontFamily: 'Segoe UI, Tahoma, sans-serif', direction: 'rtl' }}>
       <h1 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>الرسائل</h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: '14px', height: '560px' }}>
+      <div style={{ display: isMobile ? 'flex' : 'grid', flexDirection: 'column', gridTemplateColumns: isMobile ? '1fr' : '300px 1fr', gap: '14px', height: isMobile ? 'auto' : '560px' }}>
 
         {/* ── قائمة جهات الاتصال ── */}
-        <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        {(!isMobile || !selected) && (
+        <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: isMobile ? '450px' : 'auto' }}>
 
           {/* بحث */}
           <div style={{ padding: '12px', borderBottom: '1px solid #f0f0f0' }}>
@@ -237,9 +242,11 @@ export default function Messages() {
             {contacts.length} جهة اتصال
           </div>
         </div>
+        )}
 
         {/* ── نافذة المحادثة ── */}
-        <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        {(!isMobile || selected) && (
+        <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', display: 'flex', flexDirection: 'column', overflow: 'hidden', height: isMobile ? '480px' : 'auto' }}>
           {!selected ? (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#aaa' }}>
               <div style={{ fontSize: '52px', marginBottom: '14px' }}>💬</div>
@@ -252,6 +259,11 @@ export default function Messages() {
             <>
               {/* رأس المحادثة */}
               <div style={{ padding: '14px 18px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', gap: '12px', background: '#fafafa' }}>
+                {isMobile && (
+                  <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', color: '#1D9E75', padding: '4px', flexShrink: 0 }}>
+                    →
+                  </button>
+                )}
                 <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#E1F5EE', color: '#0F6E56', fontSize: '13px', fontWeight: '700', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {selected.name?.slice(0, 2)}
                 </div>
@@ -372,6 +384,7 @@ export default function Messages() {
             </>
           )}
         </div>
+        )}
       </div>
     </div>
   );

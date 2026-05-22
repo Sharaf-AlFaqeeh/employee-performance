@@ -154,7 +154,7 @@ export default function Tasks() {
     <div style={{ fontFamily: 'Segoe UI, Tahoma, sans-serif', direction: 'rtl' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: '600' }}>المهام</h1>
           <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
@@ -194,7 +194,7 @@ export default function Tasks() {
             {editingTask ? `تعديل: ${editingTask.title}` : 'إضافة مهمة جديدة'}
           </h3>
           <form onSubmit={handleSubmit}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 600 ? '1fr' : '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
 
               {/* العنوان */}
               <div style={{ gridColumn: '1/-1' }}>
@@ -472,7 +472,7 @@ export default function Tasks() {
               )}
 
               {/* معلومات المهمة */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: '#888', paddingTop: '10px', borderTop: '1px solid #f5f5f5' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: '#888', paddingTop: '10px', borderTop: '1px solid #f5f5f5', flexWrap: 'wrap', gap: '6px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <div style={{ width: '22px', height: '22px', borderRadius: '50%', background: '#E1F5EE', color: '#085041', fontSize: '9px', fontWeight: '600', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {task.assignedTo?.name?.slice(0, 2)}

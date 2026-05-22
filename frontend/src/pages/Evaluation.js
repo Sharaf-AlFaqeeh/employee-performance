@@ -39,7 +39,7 @@ export default function Evaluation() {
     <div>
       <h1 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>التقييمات</h1>
       {msg && <div style={{ background: '#E1F5EE', color: '#0F6E56', padding: '10px 14px', borderRadius: '8px', marginBottom: '14px', fontSize: '13px' }}>{msg}</div>}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : '1fr 1.5fr', gap: '16px' }}>
         <div style={{ background: 'white', borderRadius: '12px', padding: '20px', border: '1px solid #eee' }}>
           <h3 style={{ fontSize: '14px', fontWeight: '500', marginBottom: '16px' }}>تقييم جديد</h3>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -65,8 +65,8 @@ export default function Evaluation() {
         </div>
         <div style={{ background: 'white', borderRadius: '12px', border: '1px solid #eee', overflow: 'hidden' }}>
           <div style={{ padding: '16px', borderBottom: '1px solid #eee' }}><h3 style={{ fontSize: '14px', fontWeight: '500' }}>سجل التقييمات</h3></div>
-          <div style={{ overflow: 'auto', maxHeight: '460px' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+          <div style={{ overflow: 'auto', maxHeight: '460px' }} className="table-responsive">
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '500px' }}>
               <thead><tr style={{ background: '#fafafa' }}>{['الموظف', 'الفترة', 'التقييم الكلي', 'الملاحظات'].map(h => <th key={h} style={{ padding: '10px 14px', textAlign: 'right', fontWeight: '500', color: '#666', borderBottom: '1px solid #eee' }}>{h}</th>)}</tr></thead>
               <tbody>
                 {evaluations.map(ev => (

@@ -75,7 +75,7 @@ const ProgressBar = ({ label, value, max, color }) => {
 
 // ── مكوّن الإشعارات ──────────────────────────────────
 const NotificationPanel = ({ notifications, onClose }) => (
-  <div style={{ position: 'absolute', top: '44px', left: '0', width: '360px', background: 'white', borderRadius: '14px', boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid #eee', zIndex: 1000, overflow: 'hidden' }}>
+  <div style={{ position: 'absolute', top: '44px', left: '0', width: window.innerWidth < 500 ? 'calc(100vw - 40px)' : '360px', maxWidth: '360px', background: 'white', borderRadius: '14px', boxShadow: '0 8px 32px rgba(0,0,0,0.12)', border: '1px solid #eee', zIndex: 1000, overflow: 'hidden' }}>
     <div style={{ padding: '14px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div style={{ fontSize: '14px', fontWeight: '600' }}>الإشعارات</div>
       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -131,7 +131,14 @@ export default function Dashboard() {
   const [notifications, setNotifications] = useState([]);
   const [showNotif, setShowNotif] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const notifRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const loadData = async () => {
     try {
@@ -241,7 +248,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── KPI Cards ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? '8px' : '12px', marginBottom: '20px' }}>
         {[
           { label: 'إجمالي الموظفين', value: totalEmp, sub: `${todayAtt} حاضر اليوم`, color: '#1D9E75', bg: 'linear-gradient(135deg,#E8F7F2,#D0F0E8)', icon: '👥', trend: '↑', trendColor: '#1D9E75' },
           { label: 'المهام الكلية', value: taskTotal, sub: `${taskCompleted} منجزة`, color: '#534AB7', bg: 'linear-gradient(135deg,#EEEDFE,#E0DEFF)', icon: '📋', trend: taskCompleted > 0 ? '↑' : '→', trendColor: '#534AB7' },
@@ -266,14 +273,14 @@ export default function Dashboard() {
       </div>
 
       {/* ── الصف الثاني: دوائر النسب + شريط بياني ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
 
         {/* دوائر النسب المئوية */}
         <div style={{ background: 'white', borderRadius: '14px', padding: '20px', border: '1px solid #eee' }}>
           <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '20px', color: '#222' }}>
             مؤشرات الأداء الرئيسية
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(3, 1fr)', gap: isMobile ? '8px' : '16px' }}>
             <DonutChart
               percentage={completionRate}
               color="#1D9E75"
@@ -312,7 +319,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── الصف الثالث: أداء الأقسام + حالة المهام ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
 
         {/* أداء الأقسام — شريط بياني */}
         <div style={{ background: 'white', borderRadius: '14px', padding: '20px', border: '1px solid #eee' }}>
@@ -399,13 +406,14 @@ export default function Dashboard() {
 
       {/* ── الصف الرابع: جدول أداء الأقسام ── */}
       <div style={{ background: 'white', borderRadius: '14px', border: '1px solid #eee', overflow: 'hidden' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ padding: isMobile ? '12px 14px' : '16px 20px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ fontSize: '14px', fontWeight: '600', color: '#222' }}>تقرير الأقسام التفصيلي</div>
           <span style={{ fontSize: '11px', color: '#888', background: '#f5f5f5', padding: '3px 10px', borderRadius: '6px' }}>
             {new Date().toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' })}
           </span>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+        <div className="table-responsive">
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '700px' }}>
           <thead>
             <tr style={{ background: '#fafafa' }}>
               {['القسم', 'الموظفون', 'المهام', 'المنجزة', 'معدل الإنجاز', 'التقييم', 'الحالة'].map(h => (
@@ -462,6 +470,7 @@ export default function Dashboard() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
     </div>

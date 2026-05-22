@@ -14,7 +14,7 @@ export default function Attendance() {
   return (
     <div>
       <h1 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px' }}>سجل الحضور</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px', marginBottom: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: '14px', marginBottom: '20px' }}>
         {[['حاضر', summary.present || 0, '#1D9E75', '#E1F5EE'], ['غائب', summary.absent || 0, '#A32D2D', '#FCEBEB'], ['إجازة', summary.on_leave || 0, '#BA7517', '#FAEEDA'], ['متأخر', summary.late || 0, '#534AB7', '#EEEDFE']].map(([label, val, color, bg]) => (
           <div key={label} style={{ background: 'white', borderRadius: '12px', padding: '18px', border: '1px solid #eee', textAlign: 'center' }}>
             <div style={{ fontSize: '28px', fontWeight: '700', color }}>{val}</div>
@@ -26,7 +26,8 @@ export default function Attendance() {
         <div style={{ padding: '14px 16px', borderBottom: '1px solid #eee' }}>
           <h3 style={{ fontSize: '14px', fontWeight: '500' }}>حضور اليوم — {new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+        <div className="table-responsive">
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '550px' }}>
           <thead><tr style={{ background: '#fafafa' }}>{['الموظف', 'القسم', 'وقت الدخول', 'الحالة'].map(h => <th key={h} style={{ padding: '10px 14px', textAlign: 'right', fontWeight: '500', color: '#666', borderBottom: '1px solid #eee' }}>{h}</th>)}</tr></thead>
           <tbody>
             {records.map(r => {
@@ -48,6 +49,7 @@ export default function Attendance() {
             {records.length === 0 && <tr><td colSpan={4} style={{ padding: '30px', textAlign: 'center', color: '#aaa' }}>لا توجد سجلات لليوم</td></tr>}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

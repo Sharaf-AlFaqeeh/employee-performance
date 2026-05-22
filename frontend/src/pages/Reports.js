@@ -15,7 +15,8 @@ export default function Reports() {
         <div style={{ padding: '16px', borderBottom: '1px solid #eee' }}>
           <h3 style={{ fontSize: '14px', fontWeight: '500' }}>أداء الأقسام</h3>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+        <div className="table-responsive">
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '650px' }}>
           <thead><tr style={{ background: '#fafafa' }}>{['القسم', 'الموظفون', 'المهام الكلية', 'المنجزة', 'معدل الإنجاز', 'متوسط التقييم'].map(h => <th key={h} style={{ padding: '10px 14px', textAlign: 'right', fontWeight: '500', color: '#666', borderBottom: '1px solid #eee' }}>{h}</th>)}</tr></thead>
           <tbody>
             {report.map(row => (
@@ -41,6 +42,7 @@ export default function Reports() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

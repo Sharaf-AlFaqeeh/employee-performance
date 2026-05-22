@@ -147,7 +147,7 @@ export default function UserManagement() {
     <div style={{ fontFamily: 'Segoe UI, Tahoma, sans-serif', direction: 'rtl' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: '600' }}>إدارة المستخدمين</h1>
           <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
@@ -163,7 +163,7 @@ export default function UserManagement() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '12px', marginBottom: '18px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 768 ? '1fr' : 'repeat(3,1fr)', gap: '12px', marginBottom: '18px' }}>
         {[
           { label: 'إجمالي المستخدمين', value: totalUsers, color: '#534AB7', bg: '#EEEDFE', icon: '👥' },
           { label: 'حسابات نشطة', value: activeUsers, color: '#1D9E75', bg: '#E1F5EE', icon: '✓' },
@@ -197,7 +197,7 @@ export default function UserManagement() {
       {/* Edit Modal */}
       {editingUser && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', borderRadius: '16px', width: '480px', maxHeight: '90vh', overflow: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.18)' }}>
+          <div style={{ background: 'white', borderRadius: '16px', width: window.innerWidth < 520 ? '95%' : '480px', maxWidth: '480px', maxHeight: '90vh', overflow: 'auto', boxShadow: '0 8px 40px rgba(0,0,0,0.18)' }}>
 
             {/* Modal Header */}
             <div style={{ padding: '18px 22px', borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -225,7 +225,7 @@ export default function UserManagement() {
                 </div>
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 520 ? '1fr' : '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={{ fontSize: '12px', color: '#555', display: 'block', marginBottom: '4px', fontWeight: '500' }}>الاسم الكامل</label>
                   <input
@@ -245,7 +245,7 @@ export default function UserManagement() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: window.innerWidth < 520 ? '1fr' : '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={{ fontSize: '12px', color: '#555', display: 'block', marginBottom: '4px', fontWeight: '500' }}>القسم</label>
                   <select
@@ -337,12 +337,12 @@ export default function UserManagement() {
       )}
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
         <input
           placeholder="🔍 ابحث بالاسم أو البريد أو الرقم الوظيفي..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          style={{ flex: 1, padding: '9px 14px', border: '1px solid #ddd', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
+          style={{ flex: 1, minWidth: '180px', padding: '9px 14px', border: '1px solid #ddd', borderRadius: '8px', fontSize: '13px', outline: 'none' }}
         />
         <select
           value={filterRole}
@@ -361,7 +361,8 @@ export default function UserManagement() {
         {loading ? (
           <div style={{ padding: '40px', textAlign: 'center', color: '#888' }}>جارٍ التحميل...</div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+          <div className="table-responsive">
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '850px' }}>
             <thead>
               <tr style={{ background: '#fafafa' }}>
                 {['الموظف', 'الرقم الوظيفي', 'القسم', 'الدور', 'حالة الحساب', 'حالة الموظف', 'إجراءات'].map(h => (
@@ -456,6 +457,7 @@ export default function UserManagement() {
               )}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

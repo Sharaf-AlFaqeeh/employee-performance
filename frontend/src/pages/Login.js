@@ -67,9 +67,10 @@ export default function Login() {
     }}>
       <div style={{
         background: 'white',
-        padding: '40px',
+        padding: window.innerWidth < 480 ? '24px 18px' : '40px',
         borderRadius: '20px',
-        width: '420px',
+        width: '92%',
+        maxWidth: '420px',
         boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
         border: '1px solid #eee'
       }}>
