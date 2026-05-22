@@ -10,7 +10,23 @@ export default function Layout() {
   const isEmployee = user.role === 'employee';
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // جلب عدد الرسائل غير المقروءة
+  // Responsive state variables
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Monitor screen width dynamically to handle breakpoints
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) setIsSidebarOpen(false); // Auto-close sidebar on window enlarge
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Fetch unread messages count
   useEffect(() => {
     const fetchUnread = () => {
       api.get('/messages/unread-count')
@@ -28,7 +44,7 @@ export default function Layout() {
     navigate('/login', { replace: true });
   };
 
-  // قائمة التنقل حسب الدور
+  // Sidebar navigation links by user role
   const adminNav = [
     { path: '/', label: 'لوحة التحكم', icon: '⊞' },
     { path: '/employees', label: 'الموظفون', icon: '👥' },
@@ -49,7 +65,7 @@ export default function Layout() {
 
   const navItems = isEmployee ? employeeNav : adminNav;
 
-  // اسم الصفحة الحالية
+  // Active page name headers
   const pageNames = {
     '/': isEmployee ? 'لوحتي' : 'لوحة التحكم',
     '/employees': 'الموظفون',
@@ -72,17 +88,46 @@ export default function Layout() {
   return (
     <div style={{
       display: 'flex', height: '100vh', overflow: 'hidden',
-      fontFamily: 'Segoe UI, Tahoma, sans-serif', direction: 'rtl'
+      fontFamily: 'Segoe UI, Tahoma, sans-serif', direction: 'rtl',
+      background: '#f7f8fa'
     }}>
+
+      {/* ── BACKDROP OVERLAY FOR MOBILE SIDEBAR ── */}
+      {isMobile && isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 110, 86, 0.25)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 999,
+            transition: 'opacity 0.3s ease',
+          }}
+        />
+      )}
 
       {/* ── SIDEBAR ── */}
       <aside style={{
         width: '220px', background: '#fff',
         borderLeft: '1px solid #ebebeb',
-        display: 'flex', flexDirection: 'column', flexShrink: 0
+        display: 'flex', flexDirection: 'column', flexShrink: 0,
+        // Mobile responsive absolute positioning with transitions
+        position: isMobile ? 'fixed' : 'relative',
+        right: 0,
+        top: 0,
+        bottom: 0,
+        height: '100%',
+        zIndex: 1000,
+        boxShadow: isMobile ? '-5px 0 25px rgba(0,0,0,0.1)' : 'none',
+        transform: isMobile ? (isSidebarOpen ? 'translateX(0)' : 'translateX(100%)') : 'translateX(0)',
+        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       }}>
 
-        {/* شعار */}
+        {/* Logo and App Title */}
         <div style={{ padding: '14px 16px', borderBottom: '1px solid #ebebeb' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <img
@@ -102,14 +147,14 @@ export default function Layout() {
           </div>
         </div>
 
-
-        {/* روابط التنقل */}
+        {/* Navigation Links */}
         <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               end={item.path === '/'}
+              onClick={() => isMobile && setIsSidebarOpen(false)} // Auto-close sidebar on link click
               style={({ isActive }) => ({
                 display: 'flex', alignItems: 'center', gap: '10px',
                 padding: '11px 16px', fontSize: '13px', textDecoration: 'none',
@@ -133,7 +178,7 @@ export default function Layout() {
           ))}
         </nav>
 
-        {/* معلومات المستخدم */}
+        {/* User Info & Profile Summary */}
         <div style={{ borderTop: '1px solid #ebebeb', padding: '12px 14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
             <div style={{
@@ -166,10 +211,10 @@ export default function Layout() {
         </div>
       </aside>
 
-      {/* ── MAIN ── */}
+      {/* ── MAIN WORKSPACE CONTENT ── */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
-        {/* شريط علوي */}
+        {/* Top Header Bar */}
         <header style={{
           height: '52px', background: '#fff',
           borderBottom: '1px solid #ebebeb',
@@ -177,13 +222,44 @@ export default function Layout() {
           justifyContent: 'space-between',
           padding: '0 24px', flexShrink: 0
         }}>
-          <div style={{ fontSize: '15px', fontWeight: '600', color: '#222' }}>
-            {currentPage}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* Hamburger Toggle Button for Mobile Screens */}
+            {isMobile && (
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                style={{
+                  background: '#E8F7F2',
+                  border: 'none',
+                  color: '#0F6E56',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 4px rgba(29,158,117,0.15)',
+                  transition: 'background 0.2s',
+                  outline: 'none'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#d8f2e8'}
+                onMouseLeave={e => e.currentTarget.style.background = '#E8F7F2'}
+              >
+                ☰
+              </button>
+            )}
+            <div style={{ fontSize: '15px', fontWeight: '600', color: '#222' }}>
+              {currentPage}
+            </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ fontSize: '12px', color: '#888' }}>
-              {new Date().toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long' })}
-            </div>
+            {/* Show date details only on larger screens */}
+            {!isMobile && (
+              <div style={{ fontSize: '12px', color: '#888' }}>
+                {new Date().toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long' })}
+              </div>
+            )}
             <div style={{
               background: isEmployee ? '#FAEEDA' : '#E1F5EE',
               color: isEmployee ? '#633806' : '#0F6E56',
@@ -195,8 +271,8 @@ export default function Layout() {
           </div>
         </header>
 
-        {/* المحتوى */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '20px 24px', background: '#f7f8fa' }}>
+        {/* Scrollable Main Area */}
+        <main style={{ flex: 1, overflowY: 'auto', padding: isMobile ? '16px' : '20px 24px', background: '#f7f8fa' }}>
           <Outlet />
         </main>
       </div>
