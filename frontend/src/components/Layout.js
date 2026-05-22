@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import api from '../api';
+import logo from '../logo.png';
 
 export default function Layout() {
   const navigate = useNavigate();
@@ -82,15 +83,25 @@ export default function Layout() {
       }}>
 
         {/* شعار */}
-        <div style={{ padding: '18px 16px', borderBottom: '1px solid #ebebeb' }}>
+        <div style={{ padding: '14px 16px', borderBottom: '1px solid #ebebeb' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg,#1D9E75,#0F6E56)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '16px', flexShrink: 0 }}>⊞</div>
+            <img
+              src={logo}
+              alt="شعار النظام"
+              style={{
+                width: '32px',
+                height: '32px',
+                objectFit: 'contain',
+                flexShrink: 0
+              }}
+            />
             <div>
               <div style={{ fontSize: '12px', fontWeight: '700', color: '#0F6E56', lineHeight: 1.3 }}>إدارة الأداء</div>
               <div style={{ fontSize: '10px', color: '#aaa' }}>واستمرارية العمل</div>
             </div>
           </div>
         </div>
+
 
         {/* روابط التنقل */}
         <nav style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>

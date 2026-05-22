@@ -1,6 +1,6 @@
-// src/pages/Login.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../logo.png';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -75,16 +75,18 @@ export default function Login() {
       }}>
 
         {/* شعار */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{
-            width: '60px', height: '60px',
-            background: 'linear-gradient(135deg, #1D9E75, #0F6E56)',
-            borderRadius: '16px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 14px',
-            fontSize: '26px',
-            boxShadow: '0 4px 12px rgba(29,158,117,0.3)'
-          }}>⊞</div>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <img
+            src={logo}
+            alt="شعار النظام"
+            style={{
+              width: '70px',
+              height: '70px',
+              objectFit: 'contain',
+              margin: '0 auto 12px',
+              display: 'block'
+            }}
+          />
           <h1 style={{ fontSize: '20px', fontWeight: '700', color: '#0F6E56', margin: 0 }}>
             نظام إدارة أداء الموظفين
           </h1>
@@ -92,6 +94,7 @@ export default function Login() {
             واستمرارية العمل
           </p>
         </div>
+
 
         {/* نموذج الدخول */}
         <form onSubmit={handleLogin}>
